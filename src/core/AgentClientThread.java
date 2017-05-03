@@ -5,6 +5,7 @@
  */
 package core;
 
+import aslcore.MessageData;
 import core.xmlparser.XmlMarshalDemarshal;
 import core.xmlparser.XmlParser;
 import dataAgent.AgentList;
@@ -12,10 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import javax.xml.transform.Result;
 
 
 
@@ -45,25 +43,24 @@ public class AgentClientThread extends Thread{
     @Override
     public void run(){
         agents = AgentList.getInstance();
-        System.out.println("Client CON!");
         try {
-            ObjectInputStream inputAgentStream = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream outputAgentStream = new ObjectOutputStream(socket.getOutputStream());
-            while(true){
-                agent = (Agent) inputAgentStream.readObject();
-                agent.setSocket(socket);
-                System.out.println(agent.getUID_agent());
-                addToList(agent);
-                parser = new XmlMarshalDemarshal();
-                outputAgentStream.writeObject(parser.marshallParser(agents));
-                break;
+            ObjectOutputStream outputAgentStream;
+            try (ObjectInputStream inputAgentStream = new ObjectInputStream(socket.getInputStream())) {
+                outputAgentStream = new ObjectOutputStream(socket.getOutputStream());
+                while(true){
+                    System.out.println("+");
+                    agent = (Agent) inputAgentStream.readObject();
+                    System.out.println(agent.getUID_agent());
+                    agent.setSocket(socket);
+                    addToList(agent);
+                    MessageData md = (MessageData) inputAgentStream.readObject();
+                    System.out.println(md.getContent());
+                    break;
+                }   
+                //System.out.println(agents.getAgentList().size());
             }
-            
-            System.out.println(agents.getAgentList().size());
-            
-        } catch (IOException | ClassNotFoundException | JAXBException ex) {
-            
-           ex.printStackTrace();
+            //outputAgentStream.close();
+        } catch (IOException | ClassNotFoundException ex) {
         } 
     }    
     

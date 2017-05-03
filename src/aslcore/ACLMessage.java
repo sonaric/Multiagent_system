@@ -9,6 +9,7 @@ import core.Agent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 /**
  *
@@ -33,24 +34,38 @@ public class ACLMessage {
         this.agent = agent;
     }
     
-    public boolean  send(MessageData mesg) throws IOException, ClassNotFoundException{
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(agent.getSocket().getOutputStream());
-        objectOutputStream.writeObject(mesg);
-        ObjectInputStream objectInputStream = new ObjectInputStream(agent.getSocket().getInputStream());
-        MessageData msd = (MessageData)objectInputStream.readObject();
-        if(msd != null)
+    /*
+        !!! Message Shema: agent -> [server], message -> [server], [server] -> data message; !!!
+        
+    */
+    
+    public boolean  send(MessageData mesg,Socket sc) throws IOException, ClassNotFoundException{
+        MessageData msd;
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(sc.getOutputStream())) {
+            objectOutputStream.writeObject(agent);
+            objectOutputStream.writeObject(mesg);
+            if(mesg.getType() != ACLMessage.INFO)
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(sc.getInputStream())) {
+                mesg = (MessageData)objectInputStream.readObject();
+            }
+        }
+        if(mesg != null)
           return true;
         else
             return false;
     }
     
     public MessageData  receive() throws IOException, NullPointerException, ClassNotFoundException{
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(agent.getSocket().getOutputStream());
-        MessageData msgdata = new MessageData();
-        msgdata.setType(ACLMessage.REQUEST);
-        objectOutputStream.writeObject(msgdata);
-        ObjectInputStream objectInputStream = new ObjectInputStream(agent.getSocket().getInputStream());
-        MessageData msd = (MessageData)objectInputStream.readObject();
+        MessageData msd;
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(agent.getSocket().getOutputStream())) {
+            MessageData msgdata = new MessageData();
+            msgdata.setType(ACLMessage.REQUEST);
+            objectOutputStream.writeObject(agent);
+            objectOutputStream.writeObject(msgdata);
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(agent.getSocket().getInputStream())) {
+                msd = (MessageData)objectInputStream.readObject();
+            }
+        }
         if(msd != null)
         {
             return msd;

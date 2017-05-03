@@ -5,10 +5,14 @@
  */
 package workagents;
 
+import aslcore.ACLMessage;
+import aslcore.MessageData;
 import core.Agent;
 import core.AgentController;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -25,11 +29,20 @@ public class Truck extends Agent{
     
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, JAXBException{
         Truck tr = new Truck();
-        tr.setAgentName("truck4");
+        tr.setAgentName("truck1");
         tr.setStatus(tr.Free);
         System.out.println(tr.getUID_agent());
+        tr.setSocket(new Socket("localhost",1234));
         AgentController ac = new AgentController(tr);
         ac.setup();
+        tr.setSocket(new Socket("localhost",1234));                      //<---------------------ПЕРЕРОБИТЬ
+        ACLMessage am = new ACLMessage(tr);
+        MessageData md = new MessageData();
+        md.setSender(tr.getUID_agent());
+        md.setType(ACLMessage.INFO);
+        md.setTimes(new Date());
+        md.setContent("First message send!");
+        am.send(md,tr.getSocket());
        
     }
     
