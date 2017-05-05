@@ -21,6 +21,8 @@ public class ACLMessage {
     public static final int REQUEST = 3;
     public static final int RESPONSE = 4;
     public static final int ONTOLOGY = 5;
+    public static final int AUTHORIZATION = 6;
+    public static final int AGENT_LIST = 7;
     
     private String messageContent;
     private String receiver;
@@ -59,7 +61,7 @@ public class ACLMessage {
         MessageData msd;
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(agent.getSocket().getOutputStream())) {
             MessageData msgdata = new MessageData();
-            msgdata.setType(ACLMessage.REQUEST);
+            msgdata.setType(ACLMessage.AUTHORIZATION);
             objectOutputStream.writeObject(agent);
             objectOutputStream.writeObject(msgdata);
             try (ObjectInputStream objectInputStream = new ObjectInputStream(agent.getSocket().getInputStream())) {

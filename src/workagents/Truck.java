@@ -19,30 +19,34 @@ import javax.xml.bind.JAXBException;
  *
  * @author Stanislav
  */
-public class Truck extends Agent{
+public class Truck{
     public final String Free = "free";
     public final String Busy = "busy";
+    private Agent parent;
+    private long[] currentLocation;
+    private long[] homeLocation;
     
-    public Truck(){
-       super();
+    public Truck() throws CloneNotSupportedException{
+       //super();
+       parent = new Agent();
     }
     
-    public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, JAXBException{
+    public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, JAXBException, CloneNotSupportedException{
         Truck tr = new Truck();
-        tr.setAgentName("truck1");
-        tr.setStatus(tr.Free);
-        System.out.println(tr.getUID_agent());
-        tr.setSocket(new Socket("localhost",1234));
-        AgentController ac = new AgentController(tr);
+        tr.parent.setAgentName("truck2");
+        tr.parent.setStatus(tr.Free);
+        System.out.println(tr.parent.getUID_agent());
+        tr.parent.setSocket(new Socket("localhost",1234));
+        AgentController ac = new AgentController(tr.parent);
         ac.setup();
-        tr.setSocket(new Socket("localhost",1234));                      //<---------------------ПЕРЕРОБИТЬ
-        ACLMessage am = new ACLMessage(tr);
+       /* tr.parent.setSocket(new Socket("localhost",1234));                      //<---------------------ПЕРЕРОБИТЬ
+        ACLMessage am = new ACLMessage(tr.parent);
         MessageData md = new MessageData();
-        md.setSender(tr.getUID_agent());
+        md.setSender(tr.parent.getUID_agent());
         md.setType(ACLMessage.INFO);
         md.setTimes(new Date());
-        md.setContent("First message send!");
-        am.send(md,tr.getSocket());
+        md.setContent("Blablabla");
+        am.send(md,tr.parent.getSocket());*/
        
     }
     

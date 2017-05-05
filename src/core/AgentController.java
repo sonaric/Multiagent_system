@@ -5,16 +5,13 @@
  */
 package core;
 
+import aslcore.ACLMessage;
 import aslcore.MessageData;
 import core.xmlparser.XmlMarshalDemarshal;
 import core.xmlparser.XmlParser;
-import dataAgent.AgentList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -31,18 +28,17 @@ public class AgentController {
     
     public void setup() throws IOException, ClassNotFoundException, JAXBException{
         try (ObjectOutputStream outputAgentStream = new ObjectOutputStream(agent.getSocket().getOutputStream())) {
-            System.out.println("+");
-            outputAgentStream.writeObject(agent);
-            System.out.println("+");
+            ObjectInputStream inputAgentStream;
+            inputAgentStream = new ObjectInputStream(agent.getSocket().getInputStream());
             MessageData md = new MessageData();
-            md.setContent("connected agent");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {                                 //<-------------ПЕРЕРОБИТЬ ПРИНЦИП
-
-            }
+            XmlParser parser = new XmlMarshalDemarshal();
+            String content = parser.marshallParser(agent);
+            md.setType(ACLMessage.AUTHORIZATION);
+            md.setContent(content);
             outputAgentStream.writeObject(md);
-            System.out.println("+");
+            md = (MessageData)inputAgentStream.readObject();
+            System.out.println(md.getContent());
+            
         }
         
     }

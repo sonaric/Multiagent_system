@@ -81,6 +81,10 @@ public class Agent implements Serializable{
         return status;
     }
     
+    public Agent getParent(){
+        return this;
+    }
+    
     
     
 }
