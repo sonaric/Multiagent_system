@@ -17,17 +17,26 @@ import javax.xml.bind.annotation.XmlType;
  * @author Stanislav
  */
 @XmlRootElement
-@XmlType(propOrder = {"type","sender","receiver","times","address","content","status"})
+@XmlType(propOrder = {"type","sender","receiver","times","address","content","status","sender_type"})
 public class MessageData implements Serializable{
     private String receiver;
     private String sender;
     private String address;
     private Date times;
     private int type;
+    private int sender_type;
     
     private String content;
     private boolean satus;
     //private Object obj;
+
+    public int getSender_type() {
+        return sender_type;
+    }
+
+    public void setSender_type(int sender_type) {
+        this.sender_type = sender_type;
+    }
     
     public MessageData() {
     } 

@@ -5,19 +5,41 @@
  */
 package workagents;
 
+import java.util.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  *
  * @author Stanislav
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Order {
+    @XmlElementWrapper(name = "out")
     private long[] outputPoint;
+    @XmlElementWrapper(name = "in")
     private long[] inputPoint;
+    @XmlElementWrapper(name = "alt")
     private long[] alternativePoint;
     private String orderType;
     private String customer;
     private String orderStatus;
+    private long orderId;
 
     public Order() {
+        setOrderId(new Date().getTime());
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
     
     

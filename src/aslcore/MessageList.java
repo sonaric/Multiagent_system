@@ -13,15 +13,20 @@ import java.util.ArrayList;
  * @author Stanislav
  */
 public class MessageList implements Serializable{
-    private ArrayList<MessageData> messagesINFO;
-    private ArrayList<MessageData> messagesDATA;
-    private ArrayList<MessageData> messagesQUERY;
-    private ArrayList<MessageData> messagesREQUEST;
-    private ArrayList<MessageData> messagesONTOLOGY;
+    private final ArrayList<MessageData> messagesINFO = new ArrayList<>();
+    private final ArrayList<MessageData> messagesDATA = new ArrayList<>();
+    private final ArrayList<MessageData> messagesQUERY = new ArrayList<>();
+    private final ArrayList<MessageData> messagesREQUEST = new ArrayList<>();
+    private final ArrayList<MessageData> messagesONTOLOGY = new ArrayList<>();
+    private final ArrayList<MessageData> messagesAUTHORIZATION = new ArrayList<>();
     
     private static volatile MessageList instance;
     
     private MessageList(){}
+
+    public ArrayList<MessageData> getMessagesAUTHORIZATION() {
+        return messagesAUTHORIZATION;
+    }
     
     public static MessageList getInstance(){
         if(instance == null)

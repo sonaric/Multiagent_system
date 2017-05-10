@@ -38,6 +38,13 @@ public class AgentList implements Serializable{
         return instance;
     }
     
+    private static Class getClass(String classname) throws ClassNotFoundException{
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if(classLoader == null)
+            classLoader = AgentList.class.getClassLoader();
+        return (classLoader.loadClass(classname));
+    }
+    
 
     public synchronized boolean add(Agent object){
         if(object != null)

@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import workagents.OrderAgent;
+import workagents.Truck;
 
 
 
@@ -30,12 +30,11 @@ public class AgentClientThread extends Thread{
     private final Socket socket;
     private AgentList agents;
     private Agent agent;
-    //XmlParser parser;
 
     public AgentClientThread(Socket socket) {        
         agents = AgentList.getInstance();
         this.socket = socket;  
-        this.start();
+        this.start();;
     }
     
     void addToList(Agent agent) throws NullPointerException{
@@ -55,18 +54,34 @@ public class AgentClientThread extends Thread{
                 while(true){
                     MessageData md = (MessageData) inputAgentStream.readObject();
                     System.out.println(md.getContent());
+                    XmlParser parser = new XmlMarshalDemarshal();
                     if(md.getType() == ACLMessage.AUTHORIZATION){
-                        Agent temp_agent;
-                        XmlParser parser = new XmlMarshalDemarshal();
-                        temp_agent = (Agent) parser.unmarhallParser(md.getContent(), Agent.class);
-                        temp_agent.setSocket(socket);
-                        agents.add(temp_agent);
+                        messagesList.getMessagesAUTHORIZATION().add(md);
+                        if(md.getSender_type() == 1)
+                        {
+                            Truck temp_agent;
+                            temp_agent = (Truck) parser.unmarhallParser(md.getContent(), Truck.class);
+                            temp_agent.setSocket(socket);
+                            agents.add(temp_agent);
+                        }
+                        if(md.getSender_type() == 2)
+                        {
+                            OrderAgent temp_agent;
+                            temp_agent = (OrderAgent) parser.unmarhallParser(md.getContent(), OrderAgent.class);
+                            temp_agent.setSocket(socket);
+                            agents.add(temp_agent);
+                        }
                         md.setType(ACLMessage.AGENT_LIST);
                         md.setContent(parser.marshallParser(agents));
                         outputAgentStream.writeObject(md);
                     }
                     if(md.getType() == ACLMessage.INFO){
+                        messagesList.getMessagesINFO().add(md);
                         System.out.println(md.getContent());
+                    }
+                    if(md.getType() == ACLMessage.AGENT_LIST){
+                        md.setContent(parser.marshallParser(agents));
+                        outputAgentStream.writeObject(md);
                     }
                     break;
                 }   

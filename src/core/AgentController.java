@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import javax.xml.bind.JAXBException;
+import workagents.Order;
+import workagents.OrderAgent;
+import workagents.Truck;
 
 /**
  *
@@ -25,6 +28,13 @@ public class AgentController {
     public AgentController(Agent agent) {
         this.agent = agent;
     }
+    public AgentController(Truck agent) {
+        this.agent = agent;
+    }
+    
+    public AgentController(OrderAgent agent) {
+        this.agent = agent;
+    }
     
     public void setup() throws IOException, ClassNotFoundException, JAXBException{
         try (ObjectOutputStream outputAgentStream = new ObjectOutputStream(agent.getSocket().getOutputStream())) {
@@ -35,7 +45,16 @@ public class AgentController {
             String content = parser.marshallParser(agent);
             md.setType(ACLMessage.AUTHORIZATION);
             md.setContent(content);
+            if(agent.getClass().getName() == Truck.class.getName())
+            {
+                md.setSender_type(1);
+            }
+            if(agent.getClass().getName() == OrderAgent.class.getName())
+            {
+                md.setSender_type(2);
+            }
             outputAgentStream.writeObject(md);
+            
             md = (MessageData)inputAgentStream.readObject();
             System.out.println(md.getContent());
             
