@@ -48,7 +48,7 @@ public class Agent implements Serializable{
     
     
     
-    private void createUniqAgentName() throws UnknownHostException{
+    protected void createUniqAgentName() throws UnknownHostException{
         UID_agent = agentName+":"+System.getProperty("user.name")+"@"+InetAddress.getLocalHost().getHostAddress()+"/1234";  
     }
 

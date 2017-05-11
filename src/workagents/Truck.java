@@ -10,6 +10,7 @@ import aslcore.MessageData;
 import core.Agent;
 import core.AgentController;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class Truck extends Agent{
     public transient final String Busy = "busy";
     @XmlElementWrapper(name = "currentposition")
     @XmlElement(name = "pos")
-    private long[] currentLocation;
+    private String[] currentLocation;
     private long[] homeLocation;
     
     public Truck() throws CloneNotSupportedException{
@@ -46,11 +47,11 @@ public class Truck extends Agent{
         this.setStatus(this.Free);
     }
 
-    public long[] getCurrentLocation() {
+    public String[] getCurrentLocation() {
         return currentLocation;
     }
 
-    public void setCurrentLocation(long[] currentLocation) {
+    public void setCurrentLocation(String[] currentLocation) {
         this.currentLocation = currentLocation;
     }
 
@@ -62,27 +63,22 @@ public class Truck extends Agent{
         this.homeLocation = homeLocation;
     }
     
-    
+    @Override
+    protected void createUniqAgentName() throws UnknownHostException{
+        this.setUID_agent(this.getAgentName()+"#Truck"+":"+System.getProperty("user.name")+"@"+InetAddress.getLocalHost().getHostAddress()+"/1234");
+    }
     
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, JAXBException, CloneNotSupportedException{
         Truck tr = new Truck();
-        tr.init("truck1");
+        tr.init("truck3");
         System.out.println(tr.getUID_agent());
         tr.setSocket(new Socket("localhost",1234));
-        long[] l = new long[2];
-        l[0]=12313121;
-        l[1]=323124;
+        String[] l = new String[2];
+        l[0]="46.9496892";
+        l[1]="31.9983635";
         tr.setCurrentLocation(l);
         AgentController ac = new AgentController(tr);
         ac.setup();
-       /* tr.parent.setSocket(new Socket("localhost",1234));                      //<---------------------ПЕРЕРОБИТЬ
-        ACLMessage am = new ACLMessage(tr.parent);
-        MessageData md = new MessageData();
-        md.setSender(tr.parent.getUID_agent());
-        md.setType(ACLMessage.INFO);
-        md.setTimes(new Date());
-        md.setContent("Blablabla");
-        am.send(md,tr.parent.getSocket());*/
        
     }
     

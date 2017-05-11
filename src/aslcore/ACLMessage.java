@@ -23,6 +23,7 @@ public class ACLMessage {
     public static final int ONTOLOGY = 5;
     public static final int AUTHORIZATION = 6;
     public static final int AGENT_LIST = 7;
+    public static final int TRUCK_LIST = 8;
     
     private String messageContent;
     private String receiver;

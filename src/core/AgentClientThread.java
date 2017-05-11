@@ -15,9 +15,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import workagents.OrderAgent;
 import workagents.Truck;
+import workagents.TruckList;
 
 
 
@@ -30,9 +33,11 @@ public class AgentClientThread extends Thread{
     private final Socket socket;
     private AgentList agents;
     private Agent agent;
+    private TruckList trucks;
 
     public AgentClientThread(Socket socket) {        
         agents = AgentList.getInstance();
+        trucks = TruckList.getInstance();
         this.socket = socket;  
         this.start();;
     }
@@ -47,6 +52,7 @@ public class AgentClientThread extends Thread{
     public void run(){
         MessageList messagesList = MessageList.getInstance();
         agents = AgentList.getInstance();
+        trucks = TruckList.getInstance();
         try {
             ObjectOutputStream outputAgentStream;
             try (ObjectInputStream inputAgentStream = new ObjectInputStream(socket.getInputStream())) {
@@ -63,6 +69,7 @@ public class AgentClientThread extends Thread{
                             temp_agent = (Truck) parser.unmarhallParser(md.getContent(), Truck.class);
                             temp_agent.setSocket(socket);
                             agents.add(temp_agent);
+                            trucks.add(temp_agent);
                         }
                         if(md.getSender_type() == 2)
                         {
@@ -79,8 +86,8 @@ public class AgentClientThread extends Thread{
                         messagesList.getMessagesINFO().add(md);
                         System.out.println(md.getContent());
                     }
-                    if(md.getType() == ACLMessage.AGENT_LIST){
-                        md.setContent(parser.marshallParser(agents));
+                    if(md.getType() == ACLMessage.TRUCK_LIST){
+                        md.setContent(parser.marshallParser(trucks));
                         outputAgentStream.writeObject(md);
                     }
                     break;
@@ -88,6 +95,10 @@ public class AgentClientThread extends Thread{
                 //System.out.println(agents.getAgentList().size());
             } catch (JAXBException ex) {
                 
+            } catch (NullPointerException ex) {
+                Logger.getLogger(AgentClientThread.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (CloneNotSupportedException ex) {
+                Logger.getLogger(AgentClientThread.class.getName()).log(Level.SEVERE, null, ex);
             }
             //outputAgentStream.close();
         } catch (IOException | ClassNotFoundException ex) {

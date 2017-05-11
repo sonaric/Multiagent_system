@@ -11,6 +11,7 @@ import com.sun.corba.se.impl.io.InputStreamHook;
 import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import com.sun.org.apache.xerces.internal.parsers.XMLParser;
 import core.Agent;
+import core.htmlparser.HTMLParser;
 import core.xmlparser.XmlMarshalDemarshal;
 import core.xmlparser.XmlParser;
 import dataAgent.AgentList;
@@ -27,10 +28,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -52,16 +56,24 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.xml.bind.JAXBException;
 import sun.awt.image.ToolkitImage;
+import workagents.Truck;
+import workagents.TruckList;
 
 /**
  *
  * @author Stanislav
  */
 public class EnvironmentViewer extends JFrame{
+    private final HTMLParser parser;
+    public java.net.URL htmlStrc;
+    private JFXPanel jFXPanel;
+    private WebView webView;
 
     public void initGUI() throws IOException, ClassNotFoundException, JAXBException{
-        this.setBounds(100, 100, 800, 450);
+        this.setBounds(100, 100, 1100, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        htmlStrc = EnvironmentViewer.class.getResource("/maps.html");
         JTree tree;
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("Environment");
         createNodes(top);
@@ -81,7 +93,7 @@ public class EnvironmentViewer extends JFrame{
             tree.setCellRenderer(renderer);
         }
         
-        JFXPanel jFXPanel = new JFXPanel();
+        jFXPanel = new JFXPanel();
         JScrollPane treeView = new JScrollPane(tree);
         //treeView.se
         p2.add(treeView);
@@ -92,30 +104,44 @@ public class EnvironmentViewer extends JFrame{
        // contentPane.add(p,BorderLayout.WEST);
         contentPane.add(p2,BorderLayout.NORTH);
         
-        Platform.runLater(()->{
-            WebView webView = new WebView();
-            jFXPanel.setScene(new Scene(webView,500,450));
-            webView.getEngine().load("https://www.google.com.ua/maps/");
-        });
         
+        Platform.runLater(() -> {
+            webView = new WebView();
+            jFXPanel.setScene(new Scene(webView,800,600));
+            webView.getEngine().load(htmlStrc.toString());
+        });
         this.setVisible(true);
         
     };
     
+    private void updateMaps(){
+        Platform.runLater(() -> {
+            webView.getEngine().reload();
+        });
+    }
+    
     private void createNodes(DefaultMutableTreeNode top) throws IOException, ClassNotFoundException, JAXBException{
         DefaultMutableTreeNode agents = null;
         DefaultMutableTreeNode agent = null;
-        AgentList agentlist = AgentList.getInstance();
+        TruckList agentlist = TruckList.getInstance();
         agents = new DefaultMutableTreeNode("Agents");
         
         
-        Iterator<Agent> iterator = getAgents().iterator();
+        Iterator<Truck> iterator = getAgents().iterator();
+        String file="";
         while (iterator.hasNext()) {
-            Agent next = iterator.next();
-            agent = new DefaultMutableTreeNode(next.getUID_agent());
-            agents.add(agent);
+            Truck next = iterator.next();
+            if(next.getUID_agent().contains("#Truck"))
+            {
+                file = parser.parse(htmlStrc.getPath());
+                file =parser.insertMarker(file, next.getCurrentLocation(), next.getAgentName(),next.getStatus(),next.getUID_agent());
+                parser.saveHtmlFile(htmlStrc.getPath(), file);
+                agent = new DefaultMutableTreeNode(next.getUID_agent());
+                agents.add(agent);
+            }
             
         }
+        updateMaps();
         top.add(agents);
     }
     
@@ -136,20 +162,14 @@ public class EnvironmentViewer extends JFrame{
         
    
     public  static BufferedImage resizeImage(BufferedImage image, int width, int height) {
-
         ColorModel cm = image.getColorModel();
-
         WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
-
         boolean isRasterPremultiplied = cm.isAlphaPremultiplied();
-
         BufferedImage target = new BufferedImage(cm, raster, isRasterPremultiplied, null);
         Graphics2D g2 = target.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-
         double scalex = (double) target.getWidth() / image.getWidth();
         double scaley = (double) target.getHeight() / image.getHeight();
-
         AffineTransform xform = AffineTransform.getScaleInstance(scalex, scaley);
         g2.drawRenderedImage(image, xform);
         g2.dispose();
@@ -157,16 +177,16 @@ public class EnvironmentViewer extends JFrame{
     }
     
     
-    private ArrayList<Agent> getAgents() throws IOException, ClassNotFoundException, JAXBException{
+    private ArrayList<Truck> getAgents() throws IOException, ClassNotFoundException, JAXBException{
         Socket socket = new Socket("localhost", 1234);
         MessageData msd = new MessageData();
-        msd.setType(ACLMessage.AGENT_LIST);
+        msd.setType(ACLMessage.TRUCK_LIST);
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         oos.writeObject(msd);
         msd = (MessageData)ois.readObject();
         XmlParser parser = new XmlMarshalDemarshal();
-        AgentList list = (AgentList) parser.unmarhallParser(msd.getContent(), AgentList.class);
+        TruckList list = (TruckList) parser.unmarhallParser(msd.getContent(), TruckList.class);
         oos.close();
         ois.close();
         socket.close();
@@ -175,9 +195,9 @@ public class EnvironmentViewer extends JFrame{
     }
     
     
-    
     public EnvironmentViewer() throws HeadlessException {
         super("EnviromentViewer");
+        this.parser = new HTMLParser();
     }
     
     
