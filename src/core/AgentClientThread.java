@@ -11,10 +11,13 @@ import aslcore.MessageList;
 import core.xmlparser.XmlMarshalDemarshal;
 import core.xmlparser.XmlParser;
 import dataAgent.AgentList;
+import dataAgent.order.Order;
+import dataAgent.order.OrderList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -34,12 +37,14 @@ public class AgentClientThread extends Thread{
     private AgentList agents;
     private Agent agent;
     private TruckList trucks;
+    private OrderList orders;
 
     public AgentClientThread(Socket socket) {        
         agents = AgentList.getInstance();
         trucks = TruckList.getInstance();
+        orders = OrderList.getInstance();
         this.socket = socket;  
-        this.start();;
+        this.start();
     }
     
     void addToList(Agent agent) throws NullPointerException{
@@ -53,13 +58,13 @@ public class AgentClientThread extends Thread{
         MessageList messagesList = MessageList.getInstance();
         agents = AgentList.getInstance();
         trucks = TruckList.getInstance();
+        orders = OrderList.getInstance();
         try {
             ObjectOutputStream outputAgentStream;
             try (ObjectInputStream inputAgentStream = new ObjectInputStream(socket.getInputStream())) {
                 outputAgentStream = new ObjectOutputStream(socket.getOutputStream());
                 while(true){
                     MessageData md = (MessageData) inputAgentStream.readObject();
-                    System.out.println(md.getContent());
                     XmlParser parser = new XmlMarshalDemarshal();
                     if(md.getType() == ACLMessage.AUTHORIZATION){
                         messagesList.getMessagesAUTHORIZATION().add(md);
@@ -77,6 +82,7 @@ public class AgentClientThread extends Thread{
                             temp_agent = (OrderAgent) parser.unmarhallParser(md.getContent(), OrderAgent.class);
                             temp_agent.setSocket(socket);
                             agents.add(temp_agent);
+                            orders.add(temp_agent.getOrder());
                         }
                         md.setType(ACLMessage.AGENT_LIST);
                         md.setContent(parser.marshallParser(agents));
@@ -89,6 +95,29 @@ public class AgentClientThread extends Thread{
                     if(md.getType() == ACLMessage.TRUCK_LIST){
                         md.setContent(parser.marshallParser(trucks));
                         outputAgentStream.writeObject(md);
+                    }
+                    if(md.getType() == ACLMessage.REQUEST){
+                        md.setType(ACLMessage.RESPONSE);
+                        while(true){
+                            orders = OrderList.getInstance();
+                            if(orders.newOrder()!=null){
+                                String content = "";
+                                Iterator<Order> it = orders.newOrder().iterator();
+                                while (it.hasNext()) {
+                                    Order next = it.next();
+                                    content = parser.marshallParser(next);
+                                    md.setContent(content);
+                                    outputAgentStream.writeObject(md);
+                                    md = (MessageData) inputAgentStream.readObject();
+                                    if(md.getType() != ACLMessage.INFO){
+                                        Order order = (Order)parser.unmarhallParser(md.getContent(), Order.class);
+                                        orders.add(order);
+                                    }
+                                    md.setType(ACLMessage.RESPONSE);
+                                    
+                                }
+                            } 
+                        }
                     }
                     break;
                 }   

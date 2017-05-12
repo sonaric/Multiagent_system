@@ -5,7 +5,6 @@
  */
 package container;
 
-import core.Agent;
 import core.AgentClientThread;
 import dataAgent.AgentList;
 import java.io.IOException;

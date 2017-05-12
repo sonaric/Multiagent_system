@@ -5,6 +5,7 @@
  */
 package workagents;
 
+import dataAgent.order.Order;
 import aslcore.ACLMessage;
 import core.Agent;
 import core.AgentController;
@@ -39,11 +40,11 @@ public class OrderAgent extends Agent{
     
     public static void main(String[]args) throws UnknownHostException, IOException, ClassNotFoundException, JAXBException{
         OrderAgent oa = new OrderAgent();
-        oa.setAgentName("orderAgent");
+        oa.setAgentName("orderAgent8");
         oa.setSocket(new Socket("localhost", 1234));
         Order o1 = new Order();
         o1.setCustomer("Stanislav");
-        o1.setOrderStatus("new");
+        o1.setOrderStatus(Order.NEW);
         o1.setOrderType("something");
         oa.setOrder(o1);
         AgentController ac = new AgentController(oa);

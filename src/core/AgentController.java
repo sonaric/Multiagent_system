@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import javax.xml.bind.JAXBException;
-import workagents.Order;
+import dataAgent.order.Order;
 import workagents.OrderAgent;
 import workagents.Truck;
 

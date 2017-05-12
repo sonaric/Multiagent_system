@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package workagents;
+package dataAgent.order;
 
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +29,9 @@ public class Order {
     private String customer;
     private String orderStatus;
     private long orderId;
+    public final static String NEW = "New";
+    public final static String INPROCESS = "Proc";
+    public final static String DONE= "Done";
 
     public Order() {
         setOrderId(new Date().getTime());
@@ -38,7 +41,7 @@ public class Order {
         return orderId;
     }
 
-    public void setOrderId(long orderId) {
+    private void setOrderId(long orderId) {
         this.orderId = orderId;
     }
     
