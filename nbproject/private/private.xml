@@ -7,6 +7,7 @@
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/aslcore/ACLMessage.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/core/AgentController.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/core/htmlparser/HTMLParser.java</file>
+            <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/aslcore/MessageListController.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/core/Agent.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/workagents/TruckList.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/dataAgent/order/Order.java</file>
@@ -18,6 +19,7 @@
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/aslcore/MessageData.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/container/AgentConteiner.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/agentGui/TruckViewer.java</file>
+            <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/dataAgent/AgentListController.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/core/AgentClientThread.java</file>
         </group>
     </open-files>

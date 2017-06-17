@@ -40,7 +40,7 @@ public class OrderAgent extends Agent{
     
     public static void main(String[]args) throws UnknownHostException, IOException, ClassNotFoundException, JAXBException{
         OrderAgent oa = new OrderAgent();
-        oa.setAgentName("orderAgent8");
+        oa.setAgentName("orderAgent1");
         oa.setSocket(new Socket("localhost", 1234));
         Order o1 = new Order();
         o1.setCustomer("Stanislav");

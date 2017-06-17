@@ -104,6 +104,9 @@ public class TruckViewer extends Application {
             }
         });
 
+        Image img = new Image(this.getClass().getResource("..//logo.png").toString());
+        ImageView logo = new ImageView(img);
+        
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
         root.setHgap(10);
@@ -111,11 +114,13 @@ public class TruckViewer extends Application {
         root.setPadding(new Insets(10, 10, 10, 10));
         root.add(tree, 0, 0);
         root.add(btn, 0, 1);
+        root.add(logo, 0, 2);
 
         browser = new Browser(htmlStrc.toString());
         root.add(browser, 1, 0, 2, 3);
-
+        root.setId("panelview");
         Scene scene = new Scene(root, 1100, 600);
+        scene.getStylesheets().addAll(this.getClass().getResource("..//truckViewStyle.css").toExternalForm());
 
         primaryStage.setTitle("TruckViewer");
         primaryStage.setScene(scene);
