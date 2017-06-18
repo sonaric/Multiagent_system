@@ -115,11 +115,11 @@ public class Truck extends Agent{
     
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, JAXBException, CloneNotSupportedException{
         Truck tr = new Truck();
-        tr.init("truck1");
+        tr.init("truck5");
         System.out.println(tr.getUID_agent());
         tr.setSocket(new Socket("localhost",1234));
         String[] l = new String[2];
-        l[0]="48.9613313";
+        l[0]="44.9613313";
         l[1]="31.9744908";
         tr.setCurrentLocation(l);
         AgentController ac = new AgentController(tr);

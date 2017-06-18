@@ -10,7 +10,10 @@
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/aslcore/MessageListController.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/core/Agent.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/workagents/TruckList.java</file>
+            <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/agentGui/AgentOrderViewer.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/dataAgent/order/Order.java</file>
+            <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/agentGui/OrderAgentView.java</file>
+            <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/orderViewStyle.css</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/workagents/OrderAgent.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/dataAgent/order/OrderList.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/geodata/GeoDistanceTime.java</file>
@@ -20,6 +23,7 @@
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/container/AgentConteiner.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/agentGui/TruckViewer.java</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/dataAgent/AgentListController.java</file>
+            <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/truckViewStyle.css</file>
             <file>file:/C:/Users/Stanislav/Documents/GitHub/Multiagent_system/src/core/AgentClientThread.java</file>
         </group>
     </open-files>
