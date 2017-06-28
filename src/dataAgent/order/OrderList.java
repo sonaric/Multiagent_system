@@ -7,7 +7,6 @@ package dataAgent.order;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.function.Predicate;
 import workagents.Truck;
 
 /**

@@ -23,9 +23,7 @@ position: homeCenter,
 icon: "homemarker.png",
 map: map
 });
-
 <!--start--><!--stop-->
-
  google.maps.event.addListener(homemarker,'click',function() {
    var pos = map.getZoom();
     map.setZoom(13);
@@ -33,7 +31,6 @@ map: map
     window.setTimeout(function() {map.setZoom(pos);},3000);
   });
 }
-
 function centerMarker(map, marker){
 	map.setZoom(13);
 	map.setCenter(marker.getPosition());

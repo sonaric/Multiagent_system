@@ -119,8 +119,8 @@ public class Truck extends Agent{
         System.out.println(tr.getUID_agent());
         tr.setSocket(new Socket("localhost",1234));
         String[] l = new String[2];
-        l[0]="44.9613313";
-        l[1]="31.9744908";
+        l[0]="47.0008837";
+        l[1]="31.9971993";
         tr.setCurrentLocation(l);
         AgentController ac = new AgentController(tr);
         ac.setup();

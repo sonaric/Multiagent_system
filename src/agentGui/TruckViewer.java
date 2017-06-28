@@ -34,6 +34,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -107,17 +108,25 @@ public class TruckViewer extends Application {
         Image img = new Image(this.getClass().getResource("..//logo.png").toString());
         ImageView logo = new ImageView(img);
         
+        TextField searchField = new TextField();
+        searchField.setPromptText("search");
+        Button searchBtn = new Button("Пошук");
+        searchBtn.setMinWidth(95);
+        HBox hb = new HBox(5);
+        hb.getChildren().addAll(searchField, searchBtn);
+        
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
         root.setHgap(10);
         root.setVgap(10);
         root.setPadding(new Insets(10, 10, 10, 10));
         root.add(tree, 0, 0);
-        root.add(btn, 0, 1);
-        root.add(logo, 0, 2);
+        root.add(hb, 0, 1);
+        root.add(btn, 0, 2);
+        root.add(logo, 0, 3);
 
         browser = new Browser(htmlStrc.toString());
-        root.add(browser, 1, 0, 2, 3);
+        root.add(browser, 1, 0, 2, 4);
         root.setId("panelview");
         Scene scene = new Scene(root, 1100, 600);
         scene.getStylesheets().addAll(this.getClass().getResource("..//truckViewStyle.css").toExternalForm());

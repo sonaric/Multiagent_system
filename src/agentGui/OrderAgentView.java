@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import javax.xml.bind.JAXBException;
 import workagents.OrderAgent;
 
+
 /**
  *
  * @author Stanislav
@@ -50,6 +51,14 @@ public class OrderAgentView extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         
+        customer_name.setPromptText("ім'я замовника");
+        outputPoint.setPromptText("адреса навантаження");
+        inputPoint.setPromptText("адреса доставки");
+        altPoint.setPromptText("альтернативна адреса");
+        volumeWeight.setPromptText("об'ємна вага");
+        startDate.setPromptText("дата навантаження");
+        endDate.setPromptText("дата розвантаження");
+        
         Label customView = new Label("Ім'я замовника:");
         Label outputView = new Label("Місце погрузки:");
         Label inputView = new Label("Адреса доставка:");
@@ -65,7 +74,7 @@ public class OrderAgentView extends Application{
         
         
 
-        volumeWeight.setAlignment(Pos.CENTER);
+        //volumeWeight.setAlignment(Pos.BASELINE_RIGHT);
 
         
         Button acceptOrder = new Button("Підтвердити");
@@ -122,8 +131,8 @@ public class OrderAgentView extends Application{
         root.add(endDataView, 0, 8);
         
         root.add(customer_name, 1, 1);
-        root.add(outputPoint, 1, 2);
-        root.add(volumeWeight, 1, 3);
+        root.add(volumeWeight, 1, 2);
+        root.add(outputPoint, 1, 3);
         root.add(inputPoint, 1, 4);
         root.add(altPoint, 1, 5);
         root.add(startDate, 1, 6);

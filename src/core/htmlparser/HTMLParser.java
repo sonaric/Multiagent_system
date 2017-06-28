@@ -112,4 +112,42 @@ public class HTMLParser {
         return new String(Files.readAllBytes(Paths.get(fileName)));
     }
     
+    public String viewRoute(String file, String[]positionA, String[]positionB){
+        String template = " \n var pointA = new google.maps.LatLng(%s,%s), pointB = new google.maps.LatLng(%s,%s);\n";
+        template = String.format(template, positionA[0], positionA[1], positionB[0],positionB[1]);
+        String point1 = "<!--insert-->";
+        String point2 = "<!--insertEnd-->";
+        int pos1 = file.indexOf(point1);
+        int pos2 = file.indexOf(point2);
+        
+        String result = "";
+        
+        for(int i=0; i<pos1+13; i++){
+            result+=file.charAt(i);
+        }
+        result+=template;
+        for(int i=pos2; i<file.length(); i++){
+            result+=file.charAt(i);
+        }
+        return result;
+    };
+    
+    public String backChangeRoute(String file){
+        
+        String result="";
+        String point1 = "<!--insert-->";
+        String point2 = "<!--insertEnd-->";
+        int pos1 = file.indexOf(point1);
+        int pos2 = file.indexOf(point2);
+        
+        for(int i=0; i<pos1+13; i++){
+            result+=file.charAt(i);
+        }
+
+        for(int i=pos2; i<file.length(); i++){
+            result+=file.charAt(i);
+        }
+        return result;
+    }
+    
 }

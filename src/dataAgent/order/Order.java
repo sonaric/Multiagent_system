@@ -20,15 +20,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Order {
     @XmlElementWrapper(name = "out")
-    private long[] outputPoint;
+    private double[] outputPoint;
     @XmlElementWrapper(name = "in")
-    private long[] inputPoint;
+    private double[] inputPoint;
     @XmlElementWrapper(name = "alt")
-    private long[] alternativePoint;
+    private double[] alternativePoint;
     private String orderType;
     private String customer;
     private String orderStatus;
     private long orderId;
+    private String orderTruck;
+
+    public String getOrderTruck() {
+        return orderTruck;
+    }
+
+    public void setOrderTruck(String orderTruck) {
+        this.orderTruck = orderTruck;
+    }
     public final static String NEW = "New";
     public final static String INPROCESS = "Proc";
     public final static String DONE= "Done";
@@ -55,27 +64,27 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public long[] getOutputPoint() {
+    public double[] getOutputPoint() {
         return outputPoint;
     }
 
-    public void setOutputPoint(long[] outputPoint) {
+    public void setOutputPoint(double[] outputPoint) {
         this.outputPoint = outputPoint;
     }
 
-    public long[] getInputPoint() {
+    public double[] getInputPoint() {
         return inputPoint;
     }
 
-    public void setInputPoint(long[] inputPoint) {
+    public void setInputPoint(double[] inputPoint) {
         this.inputPoint = inputPoint;
     }
 
-    public long[] getAlternativePoint() {
+    public double[] getAlternativePoint() {
         return alternativePoint;
     }
 
-    public void setAlternativePoint(long[] alternativePoint) {
+    public void setAlternativePoint(double[] alternativePoint) {
         this.alternativePoint = alternativePoint;
     }
 

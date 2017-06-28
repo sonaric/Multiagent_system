@@ -5,10 +5,17 @@
  */
 package agentGui;
 
+import core.htmlparser.HTMLParser;
 import dataAgent.order.Order;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,6 +33,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -33,6 +41,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 /**
@@ -43,6 +52,8 @@ public class AgentOrderViewer extends Application{
 
     Browser browser;
     java.net.URL htmlStrc;
+    HTMLParser htmlprsr = new HTMLParser();
+    String file;
     
     
     @Override
@@ -50,7 +61,16 @@ public class AgentOrderViewer extends Application{
         Order order = new Order();
         order.setCustomer("Stanislav");
         order.setOrderStatus(Order.NEW);
-        ObservableList<Order> orders = FXCollections.observableArrayList(order);
+        order.setOrderTruck("/-/-/-/");
+        order.setOutputPoint(new double[]{46.9691248,31.9555721});
+        order.setInputPoint(new double[]{46.9676322,31.981582});
+        Order order2 = new Order();
+        order2.setCustomer("Svitlana");
+        order2.setOrderStatus(Order.INPROCESS);
+        order2.setOrderTruck("truck1");
+        order2.setOutputPoint(new double[]{47.0130766,31.9960969});
+        order2.setInputPoint(new double[]{46.9447711,32.0364936});
+        ObservableList<Order> orders = FXCollections.observableArrayList(order, order2);
         
         htmlStrc = TruckViewer.class.getResource("/mapsroute.html");
         
@@ -60,13 +80,29 @@ public class AgentOrderViewer extends Application{
         table.setMinHeight(450);
         
         TableColumn idOrder = new TableColumn("ID");
-        idOrder.setCellValueFactory(new PropertyValueFactory<>("orderId"));
-        TableColumn customerOrder = new TableColumn("Customer");
-        idOrder.setCellValueFactory(new PropertyValueFactory<>("customer"));
+        idOrder.setCellValueFactory(new PropertyValueFactory<Order,Double>("orderId"));
+        TableColumn customerOrder=  new TableColumn("Customer");
+        customerOrder.setCellValueFactory(new PropertyValueFactory<>("customer"));
         TableColumn statusOrder = new TableColumn("Status");
-        idOrder.setCellValueFactory(new PropertyValueFactory<Order,String>("orderStatus"));
+        statusOrder.setCellValueFactory(new PropertyValueFactory<Order,String>("orderStatus"));
         TableColumn truckOrder = new TableColumn("Truck");
-        idOrder.setCellValueFactory(new PropertyValueFactory<Order,String>("customer"));
+        truckOrder.setCellValueFactory(new PropertyValueFactory<Order,String>("orderTruck"));
+        
+        table.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                try {
+                    showRoute((Order)newValue);
+                } catch (IOException ex) {
+                  
+                }
+            }
+        });
+        
+        idOrder.setMinWidth(100);
+        customerOrder.setMinWidth(100);
+        statusOrder.setMinWidth(98);
+        truckOrder.setMinWidth(100);
         
         table.getColumns().addAll(idOrder,customerOrder,statusOrder,truckOrder);
         
@@ -107,11 +143,29 @@ public class AgentOrderViewer extends Application{
    
         scene.getStylesheets().add(this.getClass().getResource("..//truckViewStyle.css").toExternalForm());
         primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                file = htmlprsr.backChangeRoute(file);
+                htmlprsr.saveHtmlFile(htmlStrc.getPath(), file);
+            }
+        });
         primaryStage.show();
     }
     
     public static void main(String[] args){
         launch(args);
+    }
+    
+    private void showRoute(Order order) throws IOException{
+        String[] positionA = {String.valueOf(order.getOutputPoint()[0]), String.valueOf(order.getOutputPoint()[1])};
+        String[] positionB = {String.valueOf(order.getInputPoint()[0]), String.valueOf(order.getInputPoint()[1])};
+        file = htmlprsr.parse(htmlStrc.getPath());
+        file = htmlprsr.backChangeRoute(file);
+        htmlprsr.saveHtmlFile(htmlStrc.getPath(), file);
+        file = htmlprsr.viewRoute(file, positionA, positionB);
+        htmlprsr.saveHtmlFile(htmlStrc.getPath(), file);
+        browser.update();
     }
     
     class Browser extends Region {
